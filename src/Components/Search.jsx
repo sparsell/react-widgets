@@ -7,7 +7,7 @@ const Search = () => {
     const [ term, setTerm ] = useState("")
     const [ results, setResults ] = useState([])
 
-    console.log(term)
+    // console.log(term)
     console.log(results)
 
     // first option - most used in the community
@@ -20,15 +20,34 @@ const Search = () => {
                     list: 'search',
                     origin: '*', 
                     format: 'json',
+                    // srsearch: debounceTerm,
                     srsearch: term,
                 },
            });
+
            setResults(data.query.search);
-        //    console.log(data)
        };
-            if (term) {
+
+    //    if (debounceTerm) {
+    //     search()
+    //    }
+
+        if (term && results.length) {
             search();
-            };
+        } else {
+
+        
+        const timeoutId = setTimeout(() => {
+            if (term) {
+                search();
+                }
+        }, 1500);   
+        
+        return () => {
+            clearTimeout(timeoutId);
+            console.log("clearing the timeout")
+            }
+        };
    },[term]);
 
 //    second option - immediately called function
@@ -56,7 +75,6 @@ const Search = () => {
     // })
 
     const renderResults = results.map((result) => {
-        // console.log(results)
         return (
             <div key={result.pageid} className="item">
             <div className="right floated content">
